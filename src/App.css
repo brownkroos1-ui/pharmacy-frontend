@@ -1,42 +1,108 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+﻿@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f6f8;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: #0f172a;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header {
+  background: linear-gradient(120deg, #0f172a 0%, #0f766e 100%);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.app-brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 1.15rem;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.app-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.2rem;
+}
+
+.app-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0;
+  background: #fcd34d;
+  transition: width 0.2s ease;
+}
+
+.app-link:hover {
+  color: #ffffff;
+}
+
+.app-link:hover::after {
+  width: 100%;
+}
+
+.app-link.active {
+  color: #ffffff;
+}
+
+.app-link.active::after {
+  width: 100%;
+}
+
+.app-logout {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-logout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(239, 68, 68, 0.35);
+}
+
+.app-main {
+  flex: 1;
+  background: #f4f6f8;
+}
+
+@media (max-width: 720px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  to {
-    transform: rotate(360deg);
+
+  .app-nav {
+    width: 100%;
+    gap: 1rem;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .app-logout {
+    align-self: flex-end;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

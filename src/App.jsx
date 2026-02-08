@@ -1,43 +1,83 @@
-import React from "react";
-import { Routes, Route, Navigate, Outlet, Link } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+﻿import React from "react";
+import { Routes, Route, Navigate, Outlet, NavLink } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedAdminDashboard from "./pages/AdminDashboard";
-import ProtectedUserHome from "./pages/UserHome";
-
-// Placeholder components for requested routes
-const Medicines = () => <div style={{ padding: "2rem" }}><h2>Medicines Management</h2><p>Manage inventory here.</p></div>;
-const Sales = () => <div style={{ padding: "2rem" }}><h2>Sales Management</h2><p>View sales records here.</p></div>;
+import AdminUsers from "./pages/AdminUsers";
+import Medicines from "./pages/Medicines";
+import Sales from "./pages/Sales";
+import "./App.css";
 
 const Layout = () => {
   const { logout, role } = useAuth();
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <header style={{ backgroundColor: "#2c3e50", color: "white", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>Pharmacy App</div>
-        <nav style={{ display: "flex", gap: "1.5rem" }}>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="app-brand">Pharmacy App</div>
+        <nav className="app-nav">
           {role === "ADMIN" && (
             <>
-              <Link to="/dashboard" style={{ color: "white", textDecoration: "none" }}>Dashboard</Link>
-              <Link to="/medicines" style={{ color: "white", textDecoration: "none" }}>Medicines</Link>
-              <Link to="/sales" style={{ color: "white", textDecoration: "none" }}>Sales</Link>
+              <NavLink
+                to="/dashboard"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/medicines"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Medicines
+              </NavLink>
+              <NavLink
+                to="/sales"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Sales
+              </NavLink>
+              <NavLink
+                to="/admin/users"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Users
+              </NavLink>
             </>
           )}
-          {role === "USER" && (
-            <Link to="/user/home" style={{ color: "white", textDecoration: "none" }}>Home</Link>
+          {role === "CASHIER" && (
+            <NavLink
+              to="/sales"
+              end={false}
+              className={({ isActive }) =>
+                isActive ? "app-link active" : "app-link"
+              }
+            >
+              Sales
+            </NavLink>
           )}
         </nav>
-        <button 
-          onClick={logout} 
-          style={{ backgroundColor: "#e74c3c", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "4px", cursor: "pointer" }}
+        <button
+          onClick={logout}
+          className="app-logout"
         >
           Logout
         </button>
       </header>
-      <main style={{ flex: 1, backgroundColor: "#f4f6f8" }}>
+      <main className="app-main">
         <Outlet />
       </main>
     </div>
@@ -46,42 +86,59 @@ const Layout = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes */}
-        <Route element={
+      {/* Protected Routes */}
+      <Route
+        element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>
-        }>
-          {/* Admin Routes */}
-          <Route path="/dashboard" element={<ProtectedAdminDashboard />} />
-          {/* Redirect legacy path from Login.jsx */}
-          <Route path="/admin/dashboard" element={<Navigate to="/dashboard" replace />} />
-          
-          <Route path="/medicines" element={
+        }
+      >
+        {/* Admin Routes */}
+        <Route path="/dashboard" element={<ProtectedAdminDashboard />} />
+        {/* Redirect legacy path from Login.jsx */}
+        <Route
+          path="/admin/dashboard"
+          element={<Navigate to="/dashboard" replace />}
+        />
+
+        <Route
+          path="/medicines"
+          element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <Medicines />
             </ProtectedRoute>
-          } />
-          <Route path="/sales" element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "CASHIER"]}>
               <Sales />
             </ProtectedRoute>
-          } />
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* User Routes */}
-          <Route path="/user/home" element={<ProtectedUserHome />} />
-        </Route>
+        {/* Cashier legacy route */}
+        <Route path="/user/home" element={<Navigate to="/sales" replace />} />
+      </Route>
 
-        {/* Default Redirect */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </AuthProvider>
+      {/* Default Redirect */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }

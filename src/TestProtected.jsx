@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import api from "./api/axios";
+import api from "./api/api";
 
 function TestProtected() {
 

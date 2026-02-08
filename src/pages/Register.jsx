@@ -24,9 +24,24 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const data = await register({ username: email, password });
+      const payload = {
+        name: name.trim(),
+        email: email.trim(),
+        username: email.trim(),
+        password,
+      };
+      const data = await register(payload);
       if (data.token) {
-        authLogin(data.token, "USER");
+        authLogin(data.token, data.role || "CASHIER");
+        try {
+          const key = `pharmacy_profile_${payload.username || payload.email}`;
+          localStorage.setItem(
+            key,
+            JSON.stringify({ name: payload.name, email: payload.email })
+          );
+        } catch {
+          // ignore localStorage errors
+        }
         navigate("/login");
       } else {
         // If registration is successful but no token (e.g., email confirmation needed)
@@ -34,8 +49,14 @@ export default function Register() {
       }
     } catch (err) {
       console.error("Registration error:", err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
+      const responseData = err?.response?.data;
+      if (responseData?.message) {
+        setError(responseData.message);
+      } else if (responseData?.error) {
+        setError(responseData.error);
+      } else if (responseData && typeof responseData === "object") {
+        const details = Object.values(responseData).filter(Boolean).join(" ");
+        setError(details || `Failed to register: ${err.response.status} ${err.response.statusText}`);
       } else if (err.response) {
         setError(`Failed to register: ${err.response.status} ${err.response.statusText}`);
       } else {
