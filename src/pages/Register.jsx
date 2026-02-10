@@ -32,7 +32,9 @@ export default function Register() {
       };
       const data = await register(payload);
       if (data.token) {
-        authLogin(data.token, data.role || "CASHIER");
+        const refreshToken =
+          data?.refreshToken || data?.refresh_token || data?.data?.refreshToken;
+        authLogin(data.token, data.role || "CASHIER", refreshToken);
         try {
           const key = `pharmacy_profile_${payload.username || payload.email}`;
           localStorage.setItem(

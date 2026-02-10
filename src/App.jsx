@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedAdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
+import AdminAudit from "./pages/AdminAudit";
 import Medicines from "./pages/Medicines";
 import Sales from "./pages/Sales";
 import Suppliers from "./pages/Suppliers";
@@ -75,6 +76,15 @@ const Layout = () => {
                 }
               >
                 Users
+              </NavLink>
+              <NavLink
+                to="/admin/audit"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Audit
               </NavLink>
             </>
           )}
@@ -164,6 +174,14 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/audit"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminAudit />
             </ProtectedRoute>
           }
         />

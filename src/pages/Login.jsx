@@ -47,6 +47,10 @@ export default function Login() {
 
       // token may be in several shapes depending on backend
       const token = data?.token || data?.accessToken || data?.data?.token;
+      const refreshToken =
+        data?.refreshToken ||
+        data?.refresh_token ||
+        data?.data?.refreshToken;
       const role =
         (data && (data.role || data.user?.role)) ||
         (data?.user && (data.user.roles?.[0]?.name || data.user.roles?.[0]));
@@ -63,7 +67,7 @@ export default function Login() {
         }
 
         // Save token in AuthContext (also persisted to localStorage there)
-        authLogin(token, role);
+        authLogin(token, role, refreshToken);
 
         // Redirect based on role
         const r = role ? String(role).toUpperCase() : "";
