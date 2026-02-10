@@ -125,13 +125,28 @@ const normalizeMedicine = (item) => {
 const statusLabel = (status) => STATUS_LABELS[status] || "Unknown";
 const statusTone = (status) => STATUS_TONES[status] || "neutral";
 
-const getStockTone = (stock) => {
+const isExpired = (value) => {
+  if (!value) return false;
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return false;
+  const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  return date < startOfToday;
+};
+
+const getStockTone = (stock, expiryDate) => {
+  if (isExpired(expiryDate)) return "expired";
   if (stock <= 0) return "out";
   if (stock <= 5) return "low";
   return "ok";
 };
 
-const stockLabel = (stock) => {
+const stockLabel = (stock, expiryDate) => {
+  if (isExpired(expiryDate)) return "Expired";
   if (stock <= 0) return "Out";
   if (stock <= 5) return "Low";
   return "In stock";
@@ -390,6 +405,13 @@ export default function Sales() {
     if (selectedMedicine.stock <= 0) {
       toast.warning("Out of stock", {
         description: `${selectedMedicine.name} is unavailable.`,
+      });
+      return;
+    }
+
+    if (isExpired(selectedMedicine.expiryDate)) {
+      toast.error("Expired batch", {
+        description: `${selectedMedicine.name} has expired and cannot be sold.`,
       });
       return;
     }
@@ -765,6 +787,7 @@ export default function Sales() {
                       key={item.id}
                       type="button"
                       className="suggestion-item"
+                      disabled={isExpired(item.expiryDate)}
                       onClick={() => selectMedicine(item)}
                     >
                       <div>
@@ -773,8 +796,8 @@ export default function Sales() {
                           {item.category || "Uncategorized"} • {item.manufacturer || "-"}
                         </span>
                       </div>
-                      <span className={`pill ${getStockTone(item.stock)}`}>
-                        {stockLabel(item.stock)}
+                      <span className={`pill ${getStockTone(item.stock, item.expiryDate)}`}>
+                        {stockLabel(item.stock, item.expiryDate)}
                       </span>
                     </button>
                   ))}
@@ -790,7 +813,8 @@ export default function Sales() {
                     </div>
                   </div>
                   <div className="selected-meta">
-                    Stock: {selectedMedicine.stock} • Price {formatCurrency(selectedMedicine.price)}
+                    Stock: {selectedMedicine.stock} • Price {formatCurrency(selectedMedicine.price)} •
+                    Expiry {formatDate(selectedMedicine.expiryDate)}
                   </div>
                 </div>
               )}

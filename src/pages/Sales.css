@@ -770,6 +770,11 @@
   color: #991b1b;
 }
 
+.sales-page .pill.expired {
+  background: #e2e8f0;
+  color: #475569;
+}
+
 .sales-page .pill.warn {
   background: #fef3c7;
   color: #92400e;

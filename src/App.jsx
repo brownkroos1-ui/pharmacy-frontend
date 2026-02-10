@@ -8,6 +8,8 @@ import ProtectedAdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import Medicines from "./pages/Medicines";
 import Sales from "./pages/Sales";
+import Suppliers from "./pages/Suppliers";
+import StockIn from "./pages/StockIn";
 import "./App.css";
 
 const Layout = () => {
@@ -39,6 +41,15 @@ const Layout = () => {
                 Medicines
               </NavLink>
               <NavLink
+                to="/stock-ins"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Stock In
+              </NavLink>
+              <NavLink
                 to="/sales"
                 end={false}
                 className={({ isActive }) =>
@@ -46,6 +57,15 @@ const Layout = () => {
                 }
               >
                 Sales
+              </NavLink>
+              <NavLink
+                to="/suppliers"
+                end={false}
+                className={({ isActive }) =>
+                  isActive ? "app-link active" : "app-link"
+                }
+              >
+                Suppliers
               </NavLink>
               <NavLink
                 to="/admin/users"
@@ -120,6 +140,22 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["ADMIN", "CASHIER"]}>
               <Sales />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stock-ins"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <StockIn />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/suppliers"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Suppliers />
             </ProtectedRoute>
           }
         />
